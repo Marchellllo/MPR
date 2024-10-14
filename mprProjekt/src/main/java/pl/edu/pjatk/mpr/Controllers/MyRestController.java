@@ -20,25 +20,37 @@ public class MyRestController {
 
     @GetMapping("all") // <- endpoint
     public List<Cat> getAll() {
-        return this.catService.getCatList();
+        return catService.getAllCats();
     }
-
-    @GetMapping("{id}") // <- endpoint
-    public Cat get(@PathVariable int id) {
+    @GetMapping("{set/id}") // <- endpoint
+    public Cat setId(@PathVariable int id) {
         return this.catService.getCat(id);
     }
+    @GetMapping("{get/id}") // <- endpoint
+    public Cat get(@PathVariable int id) {
+        return this.catService.setId(5;
+    }
+    @GetMapping("{name}")
+    public List<Cat> findByName(@PathVariable String name) {
+        return this.catService.getByName(name);
+    }
+    @GetMapping("cat/{color}")
+    public List<Cat> findByColor(@PathVariable String color) {
+        return this.catService.getByColor(color);
+    }
+
 
     @PostMapping("add")
     public void addCapybara(@RequestBody Cat cat) {
         this.catService.add(cat);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("del/{id}")
     public void deleteCat(@PathVariable int id){
         catService.deleteCat(id);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("upd/{id}")
     public void updateCat(@PathVariable int id, @RequestBody Cat cat){
         catService.updateCat(id, cat);
     }
