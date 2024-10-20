@@ -1,6 +1,8 @@
 package pl.edu.pjatk.mpr.Controllers;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pjatk.mpr.Model.Cat;
 import pl.edu.pjatk.mpr.Services.CatService;
@@ -18,42 +20,69 @@ public class MyRestController {
         this.catService = catService;
     }
 
-    @GetMapping("all") // <- endpoint
+
+
+    @GetMapping("all")        // Endpoint do znalezienia wszystkich kotów
     public List<Cat> getAll() {
         return catService.getAllCats();
     }
-    @GetMapping("{set/id}") // <- endpoint
-    public Cat setId(@PathVariable int id) {
-        return this.catService.getCat(id);
+
+
+    @GetMapping("{id}")         // Endpoint do znalezienia kota po id
+    public ResponseEntity<Cat> getId(@PathVariable Long id) {
+        Cat cat = catService.getCat(id);
+
+        if(cat == null){
+            return ResponseEntity.notFound().build();  // Jeśli kot nie istnieje błąd 404
+        }
+
+        return ResponseEntity.ok(cat); // Zwracamy kota, jeśli istnieje
     }
-    @GetMapping("{get/id}") // <- endpoint
-    public Cat get(@PathVariable int id) {
-        return this.catService.setId(5;
-    }
-    @GetMapping("{name}")
+
+
+    @GetMapping("name/{name}")      // Endpoint do znalezienia kota po nazwie
     public List<Cat> findByName(@PathVariable String name) {
         return this.catService.getByName(name);
     }
-    @GetMapping("cat/{color}")
+
+
+    @GetMapping("color/{color}")        // Endpoint do znalezienia kota po kolorze
     public List<Cat> findByColor(@PathVariable String color) {
         return this.catService.getByColor(color);
     }
 
 
-    @PostMapping("add")
-    public void addCapybara(@RequestBody Cat cat) {
+    @PostMapping("add")     // Endpoint do dodawania kota
+    public  ResponseEntity<Cat> addCat(@RequestBody Cat cat) {
         this.catService.add(cat);
+        return ResponseEntity.ok(cat);
     }
 
-    @DeleteMapping("del/{id}")
-    public void deleteCat(@PathVariable int id){
-        catService.deleteCat(id);
-    }
 
-    @PutMapping("upd/{id}")
-    public void updateCat(@PathVariable int id, @RequestBody Cat cat){
+    @PatchMapping("update/{id}")        // Endpoint do aktualizacji kota
+    public ResponseEntity<Cat> updateCat(@PathVariable Long id, @RequestBody Cat cat) {
+        Cat existingCat = catService.getCat(id);
+        if (existingCat == null) {
+            return ResponseEntity.notFound().build();
+        }
         catService.updateCat(id, cat);
+
+        return ResponseEntity.ok(existingCat);
     }
+
+
+    @DeleteMapping("delete/{id}")       // Endpoint do usuwania kotów
+    public ResponseEntity<Void> deleteCat(@PathVariable Long id){
+        Cat cat = catService.getCat(id);
+        if (id==null){
+            return ResponseEntity.notFound().build();
+        }
+        catService.deleteCat(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }
 
 

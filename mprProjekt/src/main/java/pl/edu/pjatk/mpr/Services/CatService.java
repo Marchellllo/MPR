@@ -9,49 +9,56 @@ import java.util.ArrayList;
 import java.util.List;
 @Service
 public class CatService {
-    private CatRepository catRepository;
-    private List<Cat> CatList = new ArrayList<>();
+    private final CatRepository catRepository;
+
+
+    //Dane które będą w repozytorium
     public CatService(CatRepository catRepository) {
        this.catRepository = catRepository;
+       if(catRepository.count()==0){
+           catRepository.save(new Cat("Tom","White"));
+           catRepository.save(new Cat("Henry","Black"));
+           catRepository.save(new Cat("James","Grey"));
+       }
 
-        CatList.add(new Cat("Tom","White"));
-        CatList.add(new Cat("Henry","Black"));
-        CatList.add(new Cat("James","Grey"));
-    }
-    public List<Cat> getAllCats() {
-        return this.CatList;
-    }
-    public List<Cat> getByName(String name) {
-        return this.catRepository.findByName(name);
-    }
-    public List<Cat> getByColor(String color) {
-        return this.catRepository.findByColor(color);
     }
 
-    public void add(Cat cat) {
-        this.CatList.add(cat);
+    public List<Cat> getAllCats() {                 //Metoda wyszukania wszystkich kotów
+        return (List<Cat>) catRepository.findAll();
+    }
+    public List<Cat> getByName(String name) {       //Metoda wyszukania kota po nazwie
+        return catRepository.findByName(name);
+    }
+    public List<Cat> getByColor(String color) {     //Metoda wyszukania kota po kolorze
+        return catRepository.findByColor(color);
     }
 
-    public Cat getCat(Integer id) {
-        return this.CatList.get(id);
+    public Cat add(Cat cat) {                       //Metoda dodania kota
+        return catRepository.save(cat);
     }
 
-    public void deleteCat(int id) {
-        if (id >= 0 && id < this.CatList.size()){
-            this.CatList.remove(id);
-        } else {
-            throw new IndexOutOfBoundsException("Nieprawidłowe id: " + id);
-        }
+    public Cat getCat(Long id) {                    //Metoda wyszukania kota po id
+        return catRepository.findById(id).orElse(null);
     }
 
-    public void updateCat(int id, Cat cat) {
-            Cat existingCat = this.CatList.get(id);
+    public void deleteCat(Long id) {
+        catRepository.deleteById(id);
+    }       //Metoda usunięcia kota
+
+
+    public void updateCat(Long id, Cat cat) {                               //Metoda zaktualizowania kota
+        if(catRepository.existsById(id)){
+            Cat existingCat = catRepository.findById(id).get();
             existingCat.setName(cat.getName());
             existingCat.setColor(cat.getColor());
+            existingCat.setIdentificator(existingCat.calculateIdentifier());
+            catRepository.save(existingCat);
+        }
+
+
     }
-    public void setId(Long id, Cat cat){
-        cat.setId(id);
-    }
+
+
 }
 
 

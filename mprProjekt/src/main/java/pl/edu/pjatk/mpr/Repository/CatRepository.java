@@ -11,4 +11,5 @@ public interface CatRepository extends CrudRepository<Cat, Long> {
     public List<Cat> findByName(String name);
     public List<Cat> findByColor(String color);
 
+
 }
