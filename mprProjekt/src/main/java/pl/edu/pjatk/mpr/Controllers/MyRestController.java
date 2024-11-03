@@ -54,8 +54,8 @@ public class MyRestController {
 
     @PostMapping("add")     // Endpoint do dodawania kota
     public  ResponseEntity<Cat> addCat(@RequestBody Cat cat) {
-        this.catService.add(cat);
-        return ResponseEntity.ok(cat);
+        Cat addedCat = catService.add(cat);
+        return ResponseEntity.ok(addedCat);
     }
 
 

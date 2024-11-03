@@ -22,6 +22,13 @@ public class Cat {
         this.identificator = calculateIdentifier();
 
     }
+    public Long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getName(){
         return name;
     }
@@ -40,6 +47,9 @@ public class Cat {
 
     public void setIdentificator(Long identificator) {
         this.identificator = identificator;
+    }
+    public Long getIdentificator() {
+        return identificator;
     }
 
     public Long calculateIdentifier() {     //Identyfikator
@@ -60,6 +70,7 @@ public class Cat {
 
         return suma;        //Return sumy wartości znaków z pól name i color
     }
+
 
 
 }
