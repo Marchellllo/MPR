@@ -1,7 +1,9 @@
 package pl.edu.pjatk.mpr.Services;
 
+import org.hibernate.boot.model.naming.Identifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import pl.edu.pjatk.mpr.Exception.CatNotFound;
 import pl.edu.pjatk.mpr.Model.Cat;
 import pl.edu.pjatk.mpr.Repository.CatRepository;
 
@@ -28,6 +30,9 @@ public class CatService {
 
     public List<Cat> getAllCats() {                 //Metoda wyszukania wszystkich kotów
         List<Cat> cats = (List<Cat>) catRepository.findAll();
+        if(cats.isEmpty()){
+            throw new CatNotFound();
+        }
         return getFormattedCats(cats);
     }
     public List<Cat> getByName(String name) {       //Metoda wyszukania kota po nazwie
@@ -44,13 +49,17 @@ public class CatService {
         cat.setName(upperCaseName);
         cat.setColor(upperCaseColor);
 
+
         return catRepository.save(cat);
 
     }
 
     public Cat getCat(Long id) {
         Cat cat = catRepository.findById(id).orElse(null);
-        if (cat != null) {
+        if(id==null){
+            throw new CatNotFound();
+        }
+        else {
             cat.setName(stringUtilsService.capitalizeFirstLetter(cat.getName()));
             cat.setColor(stringUtilsService.capitalizeFirstLetter(cat.getColor()));
         }
@@ -59,11 +68,20 @@ public class CatService {
     }
 
     public void deleteCat(Long id) {
+        if (id == null){
+            throw new CatNotFound();
+        }
+
         catRepository.deleteById(id);
     }       //Metoda usunięcia kota
 
 
-    public void updateCat(Long id, Cat cat) {                               //Metoda zaktualizowania kota
+    public void updateCat(Long id, Cat cat) {
+        //Metoda zaktualizowania kota
+        if (cat == null) {
+            throw new CatNotFound();
+        }
+
         if(catRepository.existsById(id)){
             Cat existingCat = catRepository.findById(id).get();
             existingCat.setName(stringUtilsService.toUpperCase(cat.getName()));
