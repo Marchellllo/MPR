@@ -49,7 +49,10 @@ public class MyRestController {
 
     @GetMapping("color/{color}")        // Endpoint do znalezienia kota po kolorze
     public ResponseEntity<List<Cat>> findByColor(@PathVariable String color) {
-
+        List<Cat> cat = catService.getByColor(color);
+        if (cat.isEmpty()) {
+            return ResponseEntity.notFound().build(); // Jeśli nie ma kota o danej nazwie
+        }
         return new ResponseEntity<>(catService.getByColor(color), HttpStatus.OK);
     }
 
@@ -65,17 +68,22 @@ public class MyRestController {
 
     @PatchMapping("update/{id}")        // Endpoint do aktualizacji kota
     public ResponseEntity<Cat> updateCat(@PathVariable Long id, @RequestBody Cat cat) {
+        Cat existingCat = catService.getCat(id);
+        if (existingCat == null) {
+            return ResponseEntity.notFound().build();
+        }
+        catService.updateCat(id, cat);
 
-
-
-        return ResponseEntity.ok(catService.updateCat(id, cat));
+        return ResponseEntity.ok(existingCat);
     }
 
 
     @DeleteMapping("delete/{id}")       // Endpoint do usuwania kotów
     public ResponseEntity<Void> deleteCat(@PathVariable Long id){
         Cat cat = catService.getCat(id);
-
+        if (cat==null){
+            return ResponseEntity.notFound().build();
+        }
         catService.deleteCat(id);
         return ResponseEntity.noContent().build();
     }

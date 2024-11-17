@@ -3,9 +3,12 @@ package pl.edu.pjatk.mpr.Services;
 import org.hibernate.boot.model.naming.Identifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import pl.edu.pjatk.mpr.Exception.CatAlreadyExists;
+import pl.edu.pjatk.mpr.Exception.CatIsEmpty;
 import pl.edu.pjatk.mpr.Exception.CatNotFound;
 import pl.edu.pjatk.mpr.Model.Cat;
 import pl.edu.pjatk.mpr.Repository.CatRepository;
+import java.util.stream.Collectors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,34 +39,50 @@ public class CatService {
         return getFormattedCats(cats);
     }
     public List<Cat> getByName(String name) {       //Metoda wyszukania kota po nazwie
-        return catRepository.findByName(name);
+        List<Cat> cats = catRepository.findByName(name);
+        if(cats.isEmpty()){
+            throw new CatNotFound();
+        }
+        return getFormattedCats(cats);
     }
     public List<Cat> getByColor(String color) {     //Metoda wyszukania kota po kolorze
-        return catRepository.findByColor(color);
+        List<Cat> cats = catRepository.findByColor(color);
+        if(cats.isEmpty()){
+            throw new CatNotFound();
+        }
+        return getFormattedCats(cats);
     }
 
     public Cat add(Cat cat) {
+        if (cat.getName() == null || cat.getName().isEmpty()) {
+            throw new CatIsEmpty();
+        }
+        if (cat.getColor() == null || cat.getColor().isEmpty()) {
+            throw new CatIsEmpty();
+        }
+
+        // Oblicz identyfikator
         cat.setIdentificator(cat.calculateIdentifier());
+
+        // Używamy StringUtils do zamiany na wielkie litery
         String upperCaseName = stringUtilsService.toUpperCase(cat.getName());
         String upperCaseColor = stringUtilsService.toUpperCase(cat.getColor());
         cat.setName(upperCaseName);
         cat.setColor(upperCaseColor);
 
+        // Sprawdzamy, czy kot o tym identyfikatorze już istnieje w bazie
+        if (catRepository.findByIdentificator(cat.getIdentificator()).isPresent()) {
+            throw new CatAlreadyExists();
+        }
 
+        // Zapisz kota do repozytorium
         return catRepository.save(cat);
-
     }
 
     public Cat getCat(Long id) {
-        Cat cat = catRepository.findById(id).orElse(null);
-        if(id==null){
-            throw new CatNotFound();
-        }
-        else {
-            cat.setName(stringUtilsService.capitalizeFirstLetter(cat.getName()));
-            cat.setColor(stringUtilsService.capitalizeFirstLetter(cat.getColor()));
-        }
-
+        Cat cat = catRepository.findById(id).orElseThrow(CatNotFound::new);
+        cat.setName(stringUtilsService.capitalizeFirstLetter(cat.getName()));
+        cat.setColor(stringUtilsService.capitalizeFirstLetter(cat.getColor()));
         return cat;
     }
 
@@ -78,17 +97,20 @@ public class CatService {
 
     public void updateCat(Long id, Cat cat) {
         //Metoda zaktualizowania kota
-        if (cat == null) {
-            throw new CatNotFound();
+        if (cat.getName() == null || cat.getName().isEmpty()) {
+            throw new CatIsEmpty();
+        }
+        if (cat.getColor() == null || cat.getColor().isEmpty()) {
+            throw new CatIsEmpty();
         }
 
-        if(catRepository.existsById(id)){
-            Cat existingCat = catRepository.findById(id).get();
-            existingCat.setName(stringUtilsService.toUpperCase(cat.getName()));
-            existingCat.setColor(stringUtilsService.toUpperCase(cat.getColor()));
-            existingCat.setIdentificator(existingCat.calculateIdentifier());
-            catRepository.save(existingCat);
-        }
+        Cat existingCat = catRepository.findById(id)
+                .orElseThrow(CatNotFound::new);
+
+        existingCat.setName(stringUtilsService.toUpperCase(cat.getName()));
+        existingCat.setColor(stringUtilsService.toUpperCase(cat.getColor()));
+        existingCat.setIdentificator(existingCat.calculateIdentifier());
+        catRepository.save(existingCat);
 
 
     }
