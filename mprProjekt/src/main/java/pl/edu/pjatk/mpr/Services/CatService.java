@@ -9,6 +9,7 @@ import pl.edu.pjatk.mpr.Exception.CatNotFound;
 import pl.edu.pjatk.mpr.Model.Cat;
 import pl.edu.pjatk.mpr.Repository.CatRepository;
 import java.util.stream.Collectors;
+import java.io.File;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +124,12 @@ public class CatService {
             formattedCats.add(formattedCat);
         }
         return formattedCats;
+    }
+
+    public void generatePDF(Long id){
+        Cat cat = catRepository.findById(id).orElseThrow(CatNotFound::new);
+        File pdf = new File("PDF.pdf");
+
     }
 
 

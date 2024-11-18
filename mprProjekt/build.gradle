@@ -23,6 +23,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	runtimeOnly 'org.junit.platform:junit-platform-launcher'
 	runtimeOnly 'com.h2database:h2'
+	implementation 'org.apache.pdfbox:pdfbox:2.0.28'
+
 }
 
 tasks.named('test') {
