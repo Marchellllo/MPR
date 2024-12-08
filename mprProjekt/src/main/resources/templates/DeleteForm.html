@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Form</title>
+</head>
+<body>
+<form action="#" th:action="@{/deleteForm}" th:object="${cat}" method="post">
+
+    <input type="hidden" th:field="${cat.id}"/>
+    <p>Are you sure you want to delete the cat <strong th:text="${cat.name}"></strong>?</p>
+    <input type="submit" value="Submit"/>
+</form>
+<a href="/view/all">Back to all cats</a>
+
+</body>
+</html>

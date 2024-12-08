@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Cat</title>
+</head>
+<body>
+<h1>Add a new Cat</h1>
+
+
+<form action="#" th:action="@{/addForm}" th:object="${cat}" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" th:field="${cat.name}" placeholder="Enter cat's name" required/>
+
+    <label for="color">Color:</label>
+    <input type="text" id="color" th:field="${cat.color}" placeholder="Enter cat's color" required/>
+
+    <input type="submit" value="Add Cat"/>
+</form>
+
+<a href="/view/all">Back to all cats</a>
+</body>
+</html>

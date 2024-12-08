@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Cat</title>
+</head>
+<body>
+<h1>Update Cat</h1>
+<form action="#" th:action="@{/updateForm}" th:object="${cat}" method="post">
+    <input type="hidden" th:field="${cat.id}" />
+    <label for="name">Name:</label>
+    <input type="text" id="name" th:field="${cat.name}" />
+    <label for="color">Color:</label>
+    <input type="text" id="color" th:field="${cat.color}" />
+    <input type="submit" value="Update Cat" />
+</form>
+<a href="/view/all">Back to all cats</a>
+</body>
+</html>
