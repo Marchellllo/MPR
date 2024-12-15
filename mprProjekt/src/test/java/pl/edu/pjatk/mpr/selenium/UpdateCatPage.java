@@ -5,44 +5,42 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-
-
-public class AddCatPage {
+public class UpdateCatPage {
     private WebDriver webDriver;
-
 
     @FindBy(id = "name")
     private WebElement nameInput;
+
     @FindBy(id = "color")
     private WebElement colorInput;
+
     @FindBy(id = "submit")
-    private WebElement submitInput;
+    private WebElement submitButton;
 
-    public AddCatPage(WebDriver webDriver) {
+    public UpdateCatPage(WebDriver webDriver) {
         this.webDriver = webDriver;
-        PageFactory.initElements(webDriver, this); //<- very wazne
+        PageFactory.initElements(webDriver, this);
     }
 
-
-    public AddCatPage open() {
-        this.webDriver.get("http://localhost:8080/addForm");
+    public UpdateCatPage open(long id) {
+        this.webDriver.get("http://localhost:8080/updateForm/" + id);
         return this;
-
     }
-    public AddCatPage fillColorInput(String text) {
-        this.colorInput.sendKeys(text);
-        return this;
 
-    }
-    public AddCatPage fillNameInput(String text) {
+    public UpdateCatPage fillNameInput(String text) {
+        this.nameInput.clear();
         this.nameInput.sendKeys(text);
         return this;
-
     }
+
+    public UpdateCatPage fillColorInput(String text) {
+        this.colorInput.clear();
+        this.colorInput.sendKeys(text);
+        return this;
+    }
+
     public ViewAllPage submitForm() {
-        this.submitInput.click();
+        this.submitButton.click();
         return new ViewAllPage(webDriver);
     }
-
-
 }

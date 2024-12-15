@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class AddCatTest {
@@ -22,5 +23,7 @@ public class AddCatTest {
                 .fillNameInput("Tom")
                 .fillColorInput("White");
         ViewAllPage viewAllPage = page.submitForm();
+
+        assertTrue(viewAllPage.isCatPresent("Tom", "White"), "Kot nie został poprawnie dodany!");
     }
 }
